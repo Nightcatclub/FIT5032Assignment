@@ -1,100 +1,30 @@
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const username = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const role = ref('student')
-const errors = ref({
-  username: null,
-  password: null,
-  confirmPassword: null
-})
-const router = useRouter()
-
-const validateUsername = () => {
-  const pattern = /^[a-zA-Z0-9]*$/
-  if (username.value.length < 3) {
-    errors.value.username = 'Username must be at least 3 characters'
-  } else if (!pattern.test(username.value)) {
-    errors.value.username = 'Username can only contain letters and numbers'
-  } else {
-    errors.value.username = null
-  }
-}
-
-const validatePassword = () => {
-  const minLength = 5
-  const hasUppercase = /[A-Z]/.test(password.value)
-  const hasLowercase = /[a-z]/.test(password.value)
-  const hasNumber = /\d/.test(password.value)
-  const pattern = /^[a-zA-Z0-9]*$/
-
-  if (password.value.length < minLength) {
-    errors.value.password = `Password must be at least ${minLength} characters long`
-  } else if (!pattern.test(password.value)) {
-    errors.value.password = 'Password can only contain letters and numbers'
-  } else if (!hasUppercase) {
-    errors.value.password = 'Password must contain at least one uppercase letter'
-  } else if (!hasLowercase) {
-    errors.value.password = 'Password must contain at least one lowercase letter'
-  } else if (!hasNumber) {
-    errors.value.password = 'Password must contain at least one number'
-  } else {
-    errors.value.password = null
-  }
-}
-
-const validateConfirmPassword = () => {
-  if (password.value !== confirmPassword.value) {
-    errors.value.confirmPassword = 'Passwords do not match'
-  } else {
-    errors.value.confirmPassword = null
-  }
-}
-
-const handleRegister = () => {
-  validateUsername()
-  validatePassword()
-  validateConfirmPassword()
-
-  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword) {
-    const users = JSON.parse(localStorage.getItem('users')) || []
-    const CheckuserExists = users.find((user) => user.username === username.value)
-
-    if (CheckuserExists) {
-      alert('Username already exists!')
-    } else {
-      users.push({
-        username: username.value,
-        password: password.value,
-        role: role.value
-      })
-      localStorage.setItem('users', JSON.stringify(users))
-      alert('Registration successful!')
-      router.push('/')
-    }
-  }
-}
-</script>
-
 <template>
   <div class="register-container">
     <h1 class="text-center">Register</h1>
-    <form @submit.prevent="handleRegister">
+    <form @submit.prevent="register">
       <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
+        <label for="name" class="form-label">Name</label>
         <input
           type="text"
-          id="username"
-          v-model="username"
-          @blur="validateUsername"
-          @input="validateUsername"
+          id="name"
+          v-model="name"
           class="form-control"
           required
         />
-        <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
+        <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          v-model="email"
+          @blur="validateEmail"
+          @input="validateEmail"
+          class="form-control"
+          required
+        />
+        <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
@@ -133,6 +63,94 @@ const handleRegister = () => {
     </form>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import { db, auth } from '../Firebase/init.js'
+
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const role = ref('student')
+const errors = ref({
+  name: null,
+  email: null,
+  password: null,
+  confirmPassword: null
+})
+const router = useRouter()
+
+const validateEmail = () => {
+  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!email.value) {
+    errors.value.email = 'Email is required'
+  } else if (!pattern.test(email.value)) {
+    errors.value.email = 'Please enter a valid email address'
+  } else {
+    errors.value.email = null
+  }
+}
+
+const validatePassword = () => {
+  const minLength = 6
+  if (!password.value) {
+    errors.value.password = 'Password is required'
+  } else if (password.value.length < minLength) {
+    errors.value.password = `Password must be at least ${minLength} characters long`
+  } else {
+    errors.value.password = null
+  }
+}
+
+const validateConfirmPassword = () => {
+  if (password.value !== confirmPassword.value) {
+    errors.value.confirmPassword = 'Passwords do not match'
+  } else {
+    errors.value.confirmPassword = null
+  }
+}
+
+const register = () => {
+  if (!name.value) {
+    errors.value.name = 'Name is required'
+    return
+  } else {
+    errors.value.name = null
+  }
+
+  validateEmail()
+  validatePassword()
+  validateConfirmPassword()
+
+  if (!errors.value.email && !errors.value.password && !errors.value.confirmPassword) {
+    createUserWithEmailAndPassword(auth, email.value, password.value)
+      .then((userCredential) => {
+        const user = userCredential.user
+        console.log('Firebase register successful!')
+
+        setDoc(doc(db, 'users', user.uid), {
+          name: name.value,
+          email: email.value,
+          role: role.value
+        }).then(() => {
+          localStorage.setItem('userRole', role.value)
+          localStorage.setItem('username', name.value)
+          localStorage.setItem('email', email.value)
+          router.push('/home')
+        }).catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+      })
+      .catch((error) => {
+        console.log('Error:', error.message)
+      })
+  }
+}
+</script>
 
 <style scoped>
 .register-container {

@@ -8,7 +8,16 @@
           </router-link>
         </li>
         <li class="nav-item">
+          <router-link to="/mentalhealth" class="nav-link" active-class="active">Mental Health Assessment</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/Map" class="nav-link" active-class="active">Map</router-link>
+        </li>
+        <li class="nav-item">
           <router-link to="/rating" class="nav-link" active-class="active">Rating</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/community" class="nav-link" active-class="active">CommunityBoard</router-link>
         </li>
       </ul>
     </header>
