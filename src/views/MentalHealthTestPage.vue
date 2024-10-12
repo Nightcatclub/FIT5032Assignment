@@ -20,6 +20,7 @@
 
       <div class="button-container">
         <button type="submit" class="btn btn-primary">Submit Test</button>
+        <button @click="exportPDF" type="button" class="btn btn-secondary">Export as PDF</button>
         <button @click="goBack" type="button" class="btn btn-secondary">Go Back</button>
       </div>
     </form>
@@ -27,14 +28,15 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { jsPDF } from 'jspdf';
 
 export default {
   data() {
     return {
       questions: [
-        {
+      {
           text: 'How often do you feel overwhelmed by your responsibilities?',
           options: [
             { text: 'A: Very Often', score: 10 },
@@ -126,20 +128,20 @@ export default {
         }
       ],
       userAnswers: []
-    }
+    };
   },
   setup() {
-    const router = useRouter()
-    return { router }
+    const router = useRouter();
+    return { router };
   },
   methods: {
     async submitTest() {
-      const totalScore = this.userAnswers.reduce((sum, answer) => sum + answer, 0)
-      const userEmail = localStorage.getItem('email')
-      console.log('Total Score:', totalScore)
-      console.log('Type of totalScore:', typeof totalScore)
+      const totalScore = this.userAnswers.reduce((sum, answer) => sum + answer, 0);
+      const userEmail = localStorage.getItem('email');
+      console.log('Total Score:', totalScore);
+      console.log('Type of totalScore:', typeof totalScore);
 
-      await this.sendEmail(userEmail, 'Your Test Results', `Your total score is ${totalScore}.`)
+      await this.sendEmail(userEmail, 'Your Test Results', `Your total score is ${totalScore}.`);
     },
 
     async sendEmail(recipientEmail, subject, messageContent) {
@@ -148,24 +150,45 @@ export default {
           email: recipientEmail,
           subject: subject,
           message: messageContent
-        })
+        });
 
         if (response.status === 202) {
-          alert('Email has been sent!')
+          alert('Email has been sent!');
         } else {
-          alert('Failed to send email.')
+          alert('Failed to send email.');
         }
       } catch (error) {
-        console.error('Error sending email:', error)
-        alert('Network error. Failed to send email.')
+        console.error('Error sending email:', error);
+        alert('Network error. Failed to send email.');
       }
     },
 
+    exportPDF() {
+      const doc = new jsPDF();
+
+      doc.text('Mental Health Test Results', 10, 10);
+      this.questions.forEach((question, index) => {
+        doc.text(`${index + 1}. ${question.text}`, 10, 20 + (index * 10));
+        doc.text(`Answer: ${this.getAnswerText(question, index)}`, 10, 25 + (index * 10));
+      });
+
+      const totalScore = this.userAnswers.reduce((sum, answer) => sum + answer, 0);
+      doc.text(`Total Score: ${totalScore}`, 10, 20 + (this.questions.length * 10));
+
+      doc.save('mental_health_test_results.pdf');
+    },
+
+    getAnswerText(question, index) {
+      const selectedOption = this.userAnswers[index];
+      const option = question.options.find(opt => opt.score === selectedOption);
+      return option ? option.text : 'No answer';
+    },
+
     goBack() {
-      this.$router.push('/mentalhealth')
+      this.$router.push('/mentalhealth');
     }
   }
-}
+};
 </script>
 
 <style scoped>

@@ -8,9 +8,9 @@
       <div class="resources">
         <h2>Mental Health Resources</h2>
         <ul>
-          <li><a href="https://www.who.int/mental_health/en/" target="_blank">World Health Organization - Mental Health</a></li>
-          <li><a href="https://www.mentalhealth.gov/" target="_blank">MentalHealth.gov</a></li>
-          <li><a href="https://www.mind.org.uk/" target="_blank">Mind - Mental Health Charity</a></li>
+          <li><a href="https://mhaustralia.org/" target="_blank">Mental Health Australia</a></li>
+          <li><a href="https://www.mhvic.org.au/" target="_blank">Mental Health Victoria</a></li>
+          <li><a href="https://www.healthdirect.gov.au/mental-health-helplines" target="_blank">Mental health helplines</a></li>
         </ul>
       </div>
     </div>
