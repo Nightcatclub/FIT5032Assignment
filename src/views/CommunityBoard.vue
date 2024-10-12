@@ -2,33 +2,35 @@
   <div class="community-board">
     <h1>Community Board</h1>
 
-    <div v-if="postCount !== null" class="post-count">
+    <div v-if="postCount !== null" class="post-count card">
       <h3>Total Posts: {{ postCount }}</h3>
     </div>
 
-    <div class="input-form">
+    <div class="input-form card">
       <h3>Create New Post</h3>
       <form @submit.prevent="submitPost">
         <div class="form-group">
           <label for="title">Title:</label>
-          <input type="text" v-model="newPost.title" id="title" required />
+          <input type="text" v-model="newPost.title" id="title" class="form-control" required />
         </div>
         <div class="form-group">
           <label for="cc">CC (Email):</label>
-          <input type="email" v-model="newPost.cc" id="cc" />
+          <input type="email" v-model="newPost.cc" id="cc" class="form-control" />
         </div>
         <div class="form-group">
           <label for="content">Content:</label>
-          <textarea v-model="newPost.content" id="content" required></textarea>
+          <textarea v-model="newPost.content" id="content" class="form-control" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" @click="exportCSV" class="btn btn-secondary">Export CSV</button>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="button" @click="exportCSV" class="btn btn-secondary">Export CSV</button>
+        </div>
       </form>
     </div>
 
-    <div class="table-container">
+    <div class="table-container card">
       <h3>Posts</h3>
-      <table id="postTable" class="display"></table>
+      <table id="postTable" class="display table table-striped table-bordered"></table>
     </div>
   </div>
 </template>
@@ -154,19 +156,63 @@ export default {
   padding: 20px;
 }
 
-.input-form {
-  margin-bottom: 30px;
+.card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-.form-group {
+.input-form .form-group {
   margin-bottom: 15px;
 }
 
-.table-container {
-  margin-top: 20px;
+.input-form .form-control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-.post-count {
-  margin-bottom: 20px;
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #565e64;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container th, .table-container td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
 }
 </style>
