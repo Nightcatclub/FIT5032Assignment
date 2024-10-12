@@ -10,28 +10,20 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const cors = require("cors")({origin: true});
-const sgMail = require("@sendgrid/mail");
 
 admin.initializeApp();
-sgMail.setApiKey("YOUR_SENDGRID_API_KEY");
 
-exports.sendEmail = onRequest((req, res) => {
+exports.countPosts = onRequest((req, res) => {
   cors(req, res, async () => {
     try {
-      const {email, subject, message} = req.body;
+      const postCollection = admin.firestore().collection("posts");
+      const snapshot = await postCollection.get();
+      const count = snapshot.size;
 
-      const msg = {
-        to: email,
-        from: "crh549636158@gmail.com",
-        subject: subject,
-        text: message,
-      };
-
-      await sgMail.send(msg);
-      res.status(200).send("Email sent successfully!");
+      res.status(200).send({count});
     } catch (error) {
-      console.error("Error sending email:", error.message);
-      res.status(500).send("Error sending email");
+      console.error("Error counting posts:", error.message);
+      res.status(500).send("Error counting posts");
     }
   });
 });

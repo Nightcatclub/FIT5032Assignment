@@ -144,7 +144,7 @@ export default {
 
     async sendEmail(recipientEmail, subject, messageContent) {
       try {
-        const response = await axios.post('http://localhost:3000/send-email', {
+        const response = await axios.post('http://localhost:3001/send-email', {
           email: recipientEmail,
           subject: subject,
           message: messageContent
