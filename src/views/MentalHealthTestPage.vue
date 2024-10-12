@@ -1,10 +1,10 @@
 <template>
   <div class="test-container">
-    <h1>Mental Health Status Test</h1>
-    <form @submit.prevent="submitTest">
+    <h1 class="heading">Mental Health Status Test</h1>
+    <form @submit.prevent="submitTest" class="test-form">
       <div v-for="(question, index) in questions" :key="index" class="question-block">
-        <p>{{ question.text }}</p>
-        <div v-for="(option, idx) in question.options" :key="idx">
+        <p class="question-text">{{ question.text }}</p>
+        <div v-for="(option, idx) in question.options" :key="idx" class="option-block">
           <label>
             <input
               type="radio"
@@ -197,13 +197,65 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 40px;
+  background: linear-gradient(to right, #f9f9f9, #e3f2fd);
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.heading {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.question-block {
+  margin-bottom: 20px;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.option-block {
+  margin-left: 20px;
 }
 
 .button-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #565e64;
 }
 </style>

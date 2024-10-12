@@ -1,14 +1,11 @@
 <template>
   <div class="map-container">
-    <!-- 地名显示区域 -->
     <div class="place-name-display">
       <h3 v-if="placeName">{{ placeName }}</h3>
     </div>
 
-    <!-- 地图正方形区域 -->
     <div id="map" class="map-square"></div>
 
-    <!-- 右侧医院列表表格 -->
     <div class="hospital-list">
       <h3>Hospitals</h3>
       <table>
@@ -37,7 +34,7 @@ export default {
   data() {
     return {
       map: null,
-      placeName: '', // 存储地名
+      placeName: '', 
       hospitals: [
         { name: 'Royal Melbourne Hospital', address: '300 Grattan St, Parkville VIC 3050' },
         { name: 'St Vincent’s Hospital', address: '41 Victoria Parade, Fitzroy VIC 3065' },
@@ -48,24 +45,21 @@ export default {
     };
   },
   methods: {
-    // 初始化地图
     initMap() {
-      mapboxgl.accessToken = 'pk.eyJ1Ijoicm9veWZ1eHVhbiIsImEiOiJjbTIzNms5dmQwMmx2MmxvZ21lajRmano0In0.sDqSOOqCachhIO5DEwyCLg'; // 替换为你的Mapbox访问令牌
+      mapboxgl.accessToken = 'pk.eyJ1Ijoicm9veWZ1eHVhbiIsImEiOiJjbTIzNms5dmQwMmx2MmxvZ21lajRmano0In0.sDqSOOqCachhIO5DEwyCLg'; 
       this.map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [144.9631, -37.8136], // 墨尔本坐标
+        center: [144.9631, -37.8136], 
         zoom: 12,
       });
 
-      // 当用户点击地图时获取地名
       this.map.on('click', (e) => {
         const lngLat = e.lngLat;
         this.getPlaceName(lngLat.lng, lngLat.lat);
       });
     },
 
-    // 使用Mapbox Geocoding API获取地点名称
     async getPlaceName(lng, lat) {
       const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=pk.eyJ1Ijoicm9veWZ1eHVhbiIsImEiOiJjbTIzNms5dmQwMmx2MmxvZ21lajRmano0In0.sDqSOOqCachhIO5DEwyCLg`;
 
@@ -77,7 +71,6 @@ export default {
       }
     },
 
-    // 显示医院信息
     showHospitalInfo(hospital) {
       this.placeName = `${hospital.name}, ${hospital.address}`;
     },
@@ -89,30 +82,26 @@ export default {
 </script>
 
 <style scoped>
-/* 主容器布局：地图区域和医院列表 */
 .map-container {
   display: grid;
-  grid-template-columns: 1fr 30%; /* 使用grid布局，地图占大部分宽度，医院列表占30% */
+  grid-template-columns: 1fr 30%;
   gap: 20px;
   padding: 20px;
 }
 
-/* 地名显示区域 */
 .place-name-display {
-  grid-column: 1 / -1; /* 确保地名显示在两列的上方 */
+  grid-column: 1 / -1;
   margin-bottom: 10px;
   text-align: center;
 }
 
-/* 正方形地图区域 */
 .map-square {
-  width: 100%; /* 使地图充满它所在的列 */
-  height: 50vh; /* 固定高度为50vh，确保正方形 */
+  width: 100%;
+  height: 50vh;
   border: 1px solid #ccc;
   background-color: white;
 }
 
-/* 右侧医院列表表格 */
 .hospital-list {
   width: 100%;
 }
