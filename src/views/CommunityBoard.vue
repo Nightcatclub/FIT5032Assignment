@@ -8,7 +8,7 @@
 
     <div class="input-form card">
       <h3>Create New Post</h3>
-      <form @submit.prevent="submitPost">
+      <form @submit.prevent="submitPost" @keydown.enter="handleKeydown" @keydown.space.prevent>
         <div class="form-group">
           <label for="title">Title:</label>
           <input type="text" v-model="newPost.title" id="title" class="form-control" required />
@@ -22,8 +22,8 @@
           <textarea v-model="newPost.content" id="content" class="form-control" required></textarea>
         </div>
         <div class="button-group">
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <button type="button" @click="exportCSV" class="btn btn-secondary">Export CSV</button>
+          <button type="submit" class="btn btn-primary" @keydown.enter="submitPost" @keydown.space.prevent>Submit</button>
+          <button type="button" @click="exportCSV" @keydown.enter="exportCSV" @keydown.space.prevent class="btn btn-secondary">Export CSV</button>
         </div>
       </form>
     </div>
@@ -142,6 +142,12 @@ export default {
       } catch (error) {
         console.error("Error fetching post count:", error);
       }
+    },
+
+    handleKeydown(event) {
+      if (event.key === "Enter") {
+        this.submitPost();
+      }
     }
   },
   mounted() {
@@ -150,6 +156,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .community-board {
@@ -214,5 +221,13 @@ export default {
   padding: 10px;
   text-align: left;
   border: 1px solid #ccc;
+}
+
+.post-count {
+  margin-bottom: 20px;
+}
+
+button:focus {
+  outline: 2px solid #ff0000;
 }
 </style>

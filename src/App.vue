@@ -54,7 +54,7 @@ watch(
   max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
-  background-color: #be3a81;
+  background-color: #75be3a;
   border-radius: 10px;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="test-container">
-    <h1 class="heading">Mental Health Status Test</h1>
-    <form @submit.prevent="submitTest" class="test-form">
+    <h1>Mental Health Status Test</h1>
+    <form @submit.prevent="submitTest" @keydown.enter="handleKeydown" @keydown.space.prevent>
       <div v-for="(question, index) in questions" :key="index" class="question-block">
-        <p class="question-text">{{ question.text }}</p>
-        <div v-for="(option, idx) in question.options" :key="idx" class="option-block">
+        <p>{{ question.text }}</p>
+        <div v-for="(option, idx) in question.options" :key="idx">
           <label>
             <input
               type="radio"
@@ -19,9 +19,9 @@
       </div>
 
       <div class="button-container">
-        <button type="submit" class="btn btn-primary">Submit Test</button>
-        <button @click="exportPDF" type="button" class="btn btn-secondary">Export as PDF</button>
-        <button @click="goBack" type="button" class="btn btn-secondary">Go Back</button>
+        <button type="submit" class="btn btn-primary" @keydown.enter="submitTest" @keydown.space.prevent>Submit Test</button>
+        <button @click="exportPDF" @keydown.enter="exportPDF" @keydown.space.prevent class="btn btn-secondary">Export as PDF</button>
+        <button @click="goBack" @keydown.enter="goBack" @keydown.space.prevent class="btn btn-secondary">Go Back</button>
       </div>
     </form>
   </div>
@@ -139,7 +139,6 @@ export default {
       const totalScore = this.userAnswers.reduce((sum, answer) => sum + answer, 0);
       const userEmail = localStorage.getItem('email');
       console.log('Total Score:', totalScore);
-      console.log('Type of totalScore:', typeof totalScore);
 
       await this.sendEmail(userEmail, 'Your Test Results', `Your total score is ${totalScore}.`);
     },
@@ -186,6 +185,12 @@ export default {
 
     goBack() {
       this.$router.push('/mentalhealth');
+    },
+
+    handleKeydown(event) {
+      if (event.key === "Enter") {
+        this.submitTest();
+      }
     }
   }
 };
