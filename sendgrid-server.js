@@ -2,12 +2,16 @@ import express from 'express'
 import sgMail from '@sendgrid/mail'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-sgMail.setApiKey('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')
+// eslint-disable-next-line no-undef
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 app.post('/send-email', async (req, res) => {
   const { email, subject, message } = req.body
