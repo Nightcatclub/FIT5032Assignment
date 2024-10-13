@@ -7,7 +7,7 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-sgMail.setApiKey('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')
+sgMail.setApiKey('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')
 
 app.post('/send-email', async (req, res) => {
   const { email, subject, message } = req.body
